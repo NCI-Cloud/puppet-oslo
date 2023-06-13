@@ -122,29 +122,29 @@
 #   Defaults to undef
 #
 define oslo::db(
-  $config                  = $name,
-  $config_group            = 'database',
-  $sqlite_synchronous      = $::os_service_default,
-  $backend                 = $::os_service_default,
-  $manage_backend_package  = true,
-  $backend_package_ensure  = present,
-  $connection              = $::os_service_default,
-  $slave_connection        = $::os_service_default,
-  $mysql_sql_mode          = $::os_service_default,
-  $connection_recycle_time = $::os_service_default,
-  $max_pool_size           = $::os_service_default,
-  $max_retries             = $::os_service_default,
-  $retry_interval          = $::os_service_default,
-  $max_overflow            = $::os_service_default,
-  $connection_debug        = $::os_service_default,
-  $connection_trace        = $::os_service_default,
-  $pool_timeout            = $::os_service_default,
-  $use_db_reconnect        = $::os_service_default,
-  $db_retry_interval       = $::os_service_default,
-  $db_inc_retry_interval   = $::os_service_default,
-  $db_max_retry_interval   = $::os_service_default,
-  $db_max_retries          = $::os_service_default,
-  $mysql_enable_ndb        = $::os_service_default,
+  $config                         = $name,
+  $config_group                   = 'database',
+  $sqlite_synchronous             = $facts['os_service_default'],
+  $backend                        = $facts['os_service_default'],
+  Boolean $manage_backend_package = true,
+  $backend_package_ensure         = present,
+  $connection                     = $facts['os_service_default'],
+  $slave_connection               = $facts['os_service_default'],
+  $mysql_sql_mode                 = $facts['os_service_default'],
+  $connection_recycle_time        = $facts['os_service_default'],
+  $max_pool_size                  = $facts['os_service_default'],
+  $max_retries                    = $facts['os_service_default'],
+  $retry_interval                 = $facts['os_service_default'],
+  $max_overflow                   = $facts['os_service_default'],
+  $connection_debug               = $facts['os_service_default'],
+  $connection_trace               = $facts['os_service_default'],
+  $pool_timeout                   = $facts['os_service_default'],
+  $use_db_reconnect               = $facts['os_service_default'],
+  $db_retry_interval              = $facts['os_service_default'],
+  $db_inc_retry_interval          = $facts['os_service_default'],
+  $db_max_retry_interval          = $facts['os_service_default'],
+  $db_max_retries                 = $facts['os_service_default'],
+  $mysql_enable_ndb               = $facts['os_service_default'],
   # DEPRCATED PARAMETERS
   $idle_timeout            = undef,
   $min_pool_size           = undef,
@@ -152,11 +152,11 @@ define oslo::db(
 ) {
 
   include oslo::params
-
   if !is_service_default($connection) {
 
-    validate_legacy(Oslo::Dbconn, 'validate_re', $connection,
-      ['^(sqlite|mysql(\+pymysql)?|postgresql(\+psycopg2)?|mongodb):\/\/(\S+:\S+@\S+\/\S+)?'])
+    if ! ( $connection =~ /^(sqlite|mysql(\+pymysql)?|postgresql(\+psycopg2)?|mongodb):\/\/(\S+:\S+@\S+\/\S+)?/ ) {
+      fail("Invalid connection string ${connection}")
+    }
 
     if $manage_backend_package {
       case $connection {
