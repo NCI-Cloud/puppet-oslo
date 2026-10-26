@@ -225,7 +225,7 @@ define oslo::db(
     "${config_group}/db_inc_retry_interval"   => { value => $db_inc_retry_interval },
     "${config_group}/db_max_retry_interval"   => { value => $db_max_retry_interval },
     "${config_group}/db_max_retries"          => { value => $db_max_retries },
-    "${config_group}/use_tpool"               => { value => pick($use_tpool, $::os_service_default) },
+    "${config_group}/use_tpool"               => { value => pick($use_tpool, $facts['os_service_default']) },
     "${config_group}/mysql_enable_ndb"        => { value => $mysql_enable_ndb },
   }
 
